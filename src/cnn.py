@@ -92,3 +92,9 @@ def cnn(melspectrogram, weights, phase_train):
     p_y_X = tf.nn.sigmoid(tf.add(tf.matmul(flat, weights['woutput']), weights['boutput']))
 
     return p_y_X
+
+
+def sort_result(tags, preds):
+    result = zip(tags, preds)
+    sorted_result = sorted(result, key=lambda x: x[1], reverse=True)
+    return [(name, '%5.3f' % score) for name, score in sorted_result]
