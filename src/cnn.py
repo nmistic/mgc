@@ -143,3 +143,24 @@ if __name__ == '__main__':
         'boutput': init_biases([10])
 
     }
+
+    # set placeholders for the X and y
+    # X - melspectrogram array
+    # y - label
+    # lrate - learning rate
+    # phase_train - is training on?
+    X = tf.placeholder("float", [None, 96, 1366, 1])
+    y = tf.placeholder("float", [None, 10])
+    lrate = tf.placeholder("float")
+    phase_train = tf.placeholder(tf.bool, name='phase_train')
+
+    # generate the cnn graph using the weights and phase train of the data
+    y_ = cnn(X, weights, phase_train)
+
+    # create the cost function using the logit activation
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_, y))
+    # create the RMSPropOptimizer object to minimize the cost
+    train_op = tf.train.RMSPropOptimizer(learning_rate, 0.9).minimize(cost)
+    predict_op = y_
+
+    tags = ['blues', 'classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock']
