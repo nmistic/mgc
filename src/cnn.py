@@ -98,3 +98,48 @@ def sort_result(tags, preds):
     result = zip(tags, preds)
     sorted_result = sorted(result, key=lambda x: x[1], reverse=True)
     return [(name, '%5.3f' % score) for name, score in sorted_result]
+
+
+if __name__ == '__main__':
+
+    # generate training and test sets
+
+    # get indices for range of n_samples
+    indices = np.arange(n_samples)
+    np.random.shuffle(indices)
+    train_indices = indices[0:train_size]
+    test_indices  = indices[train_size:]
+
+    # get the labels from the data
+    labels = rd.get_labels()
+
+    # get all melspectrograms for the test set
+    X_test = rd.get_melspectrograms_indexed(test_indices)
+    # get output labels for both test and train sets
+    y_train = labels[train_indices]
+    y_test = labels[test_indices]
+
+    # set the weights for all layers and all biases in the network
+    # [fh, fw, fn', fn] -> weights for a convolution layer
+    # fh - height of the receptive field
+    # fw - width of the receptive field
+    # fn - number of feature maps in the previous layer
+    # fn' - number of feature maps in the current layer
+    weights = {
+        # weights
+        'wconv1': init_weights([3, 3, 1, 32]),
+        'wconv2': init_weights([3, 3, 32, 128]),
+        'wconv3': init_weights([3, 3, 128, 128]),
+        'wconv4': init_weights([3, 3, 128, 192]),
+        'wconv5': init_weights([3, 3, 192, 256]),
+        # biases
+        'bconv1': init_biases([32]),
+        'bconv2': init_biases([128]),
+        'bconv3': init_biases([128]),
+        'bconv4': init_biases([192]),
+        'bconv5': init_biases([256]),
+        # output layer
+        'woutput': init_weights([256, 10]),
+        'boutput': init_biases([10])
+
+    }
