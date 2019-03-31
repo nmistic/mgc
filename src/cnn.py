@@ -164,3 +164,19 @@ if __name__ == '__main__':
     predict_op = y_
 
     tags = ['blues', 'classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock']
+
+    with tf.Session() as sess:
+        # initialize all variables of the graph
+        tf.initialize_all_variables().run()
+        # start training for n_epochs
+        for i in range(n_epoch):
+            training_batch = zip(range(0, train_size, batch_size), range(batch_size, train_size+1, batch_size))
+            for start, end in training_batch:
+                X_train = rd.get_melspectrograms_indexed(train_indices[start:end])
+                # create feed dict
+                train_input_dict = {X: X_train,
+                                    y: y_train[start:end],
+                                    lrate: learning_rate,
+                                    phase_train: True}
+                # run the RMSPropOptimizer to optimize the costs
+                sess.run(train_op, feed_dict=train_input_dict)
