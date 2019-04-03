@@ -180,3 +180,21 @@ if __name__ == '__main__':
                                     phase_train: True}
                 # run the RMSPropOptimizer to optimize the costs
                 sess.run(train_op, feed_dict=train_input_dict)
+
+            # create the test set
+            test_indices = np.arange(len(X_test))
+            np.random.shuffle(test_indices)
+            test_indices = test_indices[0:test_size]
+
+            # test_input_dict = {X: X_test[test_indices],
+            # y: y_test[test_indices],
+            # phase_train: True}
+            test_input_dict = {X: X_test[test_indices],
+                               y: y_test[test_indices],
+                               phase_train: False}
+            # set the cnn to predict for the test set
+            predictions = sess.run(predict_op, feed_dict=test_input_dict)
+            # see the results with the ROC score
+            print('Epoch : ', i,  'AUC : ', sm.roc_auc_score(y_test[test_indices], predictions, average='samples'))
+            # print(i, np.mean(np.argmax(y_test[test_indices], axis=1) == predictions))
+            # print sort_result(tags, predictions)[:5]
